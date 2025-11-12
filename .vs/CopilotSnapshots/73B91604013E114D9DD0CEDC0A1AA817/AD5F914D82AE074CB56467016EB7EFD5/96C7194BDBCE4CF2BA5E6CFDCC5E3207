@@ -1,0 +1,59 @@
+﻿import { MicAnalyser } from './audio';
+import { BloomScene } from './scene';
+
+const canvas = document.getElementById('stage') as HTMLCanvasElement;
+const startBtn = document.getElementById('start') as HTMLButtonElement;
+const fileBtn = document.getElementById('fileBtn') as HTMLButtonElement;
+const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+const gainEl = document.getElementById('gain') as HTMLInputElement;
+const levelValue = document.getElementById('levelValue') as HTMLSpanElement;
+
+const audio = new MicAnalyser();
+const app = new BloomScene(canvas);
+
+let running = false;
+
+startBtn.addEventListener('click', async () => {
+  try {
+    await audio.init();
+    running = true;
+    startBtn.disabled = true;
+    fileBtn.disabled = true;
+    startBtn.textContent = 'Mic Active';
+  } catch (e) {
+    console.error('Microphone error:', e);
+    alert('Microphone permissions are required for audio-reactive mode.\nTry uploading an audio file instead.');
+  }
+});
+
+fileBtn.addEventListener('click', () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', async (e) => {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  
+  try {
+    await audio.initFromFile(file);
+    running = true;
+    startBtn.disabled = true;
+    fileBtn.disabled = true;
+    fileBtn.textContent = `Playing: ${file.name.slice(0, 20)}...`;
+  } catch (e) {
+    console.error('File load error:', e);
+    alert('Failed to load audio file. Please try a different file.');
+  }
+});
+
+gainEl.addEventListener('input', () => {
+  audio.gain = parseFloat(gainEl.value);
+});
+
+function loop() {
+  const lvl = running ? audio.level() : 0.0;
+  levelValue.textContent = `${Math.round(lvl * 100)}%`;
+  app.update(lvl);
+  requestAnimationFrame(loop);
+}
+loop();
