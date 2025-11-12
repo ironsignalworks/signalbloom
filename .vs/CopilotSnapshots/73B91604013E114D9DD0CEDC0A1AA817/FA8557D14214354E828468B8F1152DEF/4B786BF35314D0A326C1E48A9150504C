@@ -1,6 +1,0 @@
-﻿:root { --bg:#0b0f12; --fg:#d5e1ff33; --ui:#1a2330; }
-html,body { height:100%; margin:0; background:var(--bg); color:#cfe1ff; font:14px/1.4 ui-monospace, monospace; }
-#stage { position:fixed; inset:0; display:block; z-index: 0; }
-#ui { position:fixed; left:12px; top:12px; background:var(--ui); border:1px solid #2b3a50; border-radius:10px; padding:10px 12px; display:flex; gap:10px; align-items:center; z-index: 10; }
-#start { cursor:pointer; }
-label { display:flex; gap:8px; align-items:center; }
