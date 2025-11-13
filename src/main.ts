@@ -29,7 +29,7 @@ let isFullscreen = false;
 let isMicActive = false;
 let isFileActive = false;
 
-const modes: VisMode[] = ['sphere', 'waveform', 'bars', 'tunnel', 'galaxy', 'fractals'];
+const modes: VisMode[] = ['sphere', 'waveform', 'bars', 'tunnel', 'galaxy', 'fractals', 'water', 'texture', 'melt'];
 let currentModeIndex = 0;
 
 // Helper function to create play/pause icon

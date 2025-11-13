@@ -4,30 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Signal Bloom - Audio Visualizer</title>
-    <meta name="description" content="Audio-reactive 3D visualizer built with Three.js and Web Audio API. Features 5 visualization modes: sphere, waveform, bars, tunnel, and galaxy." />
+    <meta name="description" content="Audio-reactive 3D visualizer built with Three.js and Web Audio API. Features 9 visualization modes including WebGL shaders: sphere, waveform, bars, tunnel, galaxy, fractals, water, texture, and melt." />
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://signal-bloom.app/" />
     <meta property="og:title" content="Signal Bloom - Audio Visualizer" />
-    <meta property="og:description" content="Audio-reactive 3D visualizer with 5 modes: sphere, waveform, bars, tunnel, galaxy" />
+    <meta property="og:description" content="Audio-reactive 3D visualizer with 9 modes including WebGL shaders: sphere, waveform, bars, tunnel, galaxy, fractals, water, texture, melt" />
     <meta property="og:image" content="/card.png" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://signal-bloom.app/" />
     <meta property="twitter:title" content="Signal Bloom - Audio Visualizer" />
-    <meta property="twitter:description" content="Audio-reactive 3D visualizer with 5 modes: sphere, waveform, bars, tunnel, galaxy" />
+    <meta property="twitter:description" content="Audio-reactive 3D visualizer with 9 modes including WebGL shaders: sphere, waveform, bars, tunnel, galaxy, fractals, water, texture, melt" />
     <meta property="twitter:image" content="/card.png" />
     
-    <script type="module" crossorigin src="/assets/index-NNg6Ufjp.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DsdulC6k.css">
+    <script type="module" crossorigin src="/assets/index-BbuFHKfZ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DhzzUe_b.css">
   </head>
   <body>
     <div id="ui">
@@ -62,7 +59,8 @@
     </div>
     
     <div id="footer">
-      <img src="/icon.svg" alt="Signal Bloom" />
+      <a class="brand-link">SIGNAL BLOOM</a>
+      <span class="separator"></span>
       <a id="aboutLink">ABOUT</a>
       <span class="separator"></span>
       <a href="https://ironsignalworks.com" target="_blank" rel="noopener noreferrer">IRON SIGNAL WORKS</a>
@@ -83,7 +81,7 @@
           <ul>
             <li><code>Mic</code> - Enable microphone input</li>
             <li><code>File</code> - Upload audio file (MP3, WAV, etc.)</li>
-            <li><code>Mode</code> - Cycle through 6 visualization modes</li>
+            <li><code>Mode</code> - Cycle through 9 visualization modes</li>
             <li><code>Reset</code> - Reset camera and playback</li>
             <li><code>Gain</code> - Adjust visualization sensitivity</li>
             <li><code>Vol</code> - Control audio playback volume</li>
@@ -97,6 +95,9 @@
             <li><strong>TUNNEL</strong> - Speed-reactive particle tunnel</li>
             <li><strong>GALAXY</strong> - 5-armed spiral galaxy</li>
             <li><strong>FRACTALS</strong> - Recursive 3D geometric shapes</li>
+            <li><strong>WATER</strong> - Volumetric underwater atmosphere (immersive)</li>
+            <li><strong>TEXTURE</strong> - Enveloping Voronoi color environment</li>
+            <li><strong>MELT</strong> - Atmospheric liquid distortion surrounding you</li>
           </ul>
 
           <h3>Controls</h3>

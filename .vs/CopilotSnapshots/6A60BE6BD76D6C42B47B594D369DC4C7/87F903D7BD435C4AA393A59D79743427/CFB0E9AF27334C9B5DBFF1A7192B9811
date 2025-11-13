@@ -132,19 +132,14 @@ Atmospheric liquid distortion rendered volumetrically around the camera. Smooth 
 
 ## Generating Images
 
-To generate the social card image:
+To generate the favicon and social card images:
 
 1. Open `public/generate-images.html` in your browser
-2. Click the download button to generate:
+2. Click the download buttons to generate:
    - `card.png` (1200x630) - Social media preview card
-3. Save file to `/public` folder
-
-The favicon (`favicon.svg`) is already included and works in all modern browsers.
-
-**Optional PNG Favicons** (for legacy browser support):
-- Use `generate-images.html` to create `favicon-32x32.png` and `favicon-16x16.png`
-- Add them to `/public` folder
-- Uncomment the PNG favicon links in `index.html`
+   - `favicon-32x32.png` - 32x32 favicon
+   - `favicon-16x16.png` - 16x16 favicon
+3. Save files to `/public` folder
 
 Alternatively, see `public/IMAGE-GENERATION-GUIDE.md` for other methods.
 
@@ -153,10 +148,12 @@ Alternatively, see `public/IMAGE-GENERATION-GUIDE.md` for other methods.
 ```
 signal-bloom/
 ├── public/
-│   ├── favicon.svg           # ISW logo favicon (included)
-│   ├── card.png              # Social media card (generate using tool)
-│   ├── icon.svg              # ISW logo for footer (included)
-│   └── generate-images.html  # Tool to generate card.png
+│   ├── favicon.svg           # SVG favicon (works everywhere)
+│   ├── favicon-32x32.png     # PNG favicon (32x32)
+│   ├── favicon-16x16.png     # PNG favicon (16x16)
+│   ├── card.png              # Social media card (1200x630)
+│   ├── icon.svg              # Small icon for footer
+│   └── generate-images.html  # Tool to generate PNG images
 ├── src/
 │   ├── main.ts               # Entry point & UI logic
 │   ├── scene.ts              # Three.js scene & 9 visualizations

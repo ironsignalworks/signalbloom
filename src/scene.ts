@@ -3,12 +3,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { waterShader, textureShader, meltShader, createShaderMaterial } from './shaders';
 
-export type VisMode = 'sphere' | 'waveform' | 'bars' | 'tunnel' | 'galaxy' | 'fractals';
+export type VisMode = 'sphere' | 'waveform' | 'bars' | 'tunnel' | 'galaxy' | 'fractals' | 'water' | 'texture' | 'melt';
 
 type Uniforms = {
   uTime: { value: number };
   uLevel: { value: number };
+  uResolution: { value: THREE.Vector2 };
 };
 
 export class BloomScene {
@@ -21,6 +23,7 @@ export class BloomScene {
   private uniforms: Uniforms = {
     uTime: { value: 0 },
     uLevel: { value: 0 },
+    uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
   };
   private clock = new THREE.Clock();
   private mode: VisMode = 'sphere';
@@ -92,6 +95,15 @@ export class BloomScene {
         break;
       case 'fractals':
         this.visualObject = this.makeFractals();
+        break;
+      case 'water':
+        this.visualObject = this.makeWaterShader();
+        break;
+      case 'texture':
+        this.visualObject = this.makeTextureShader();
+        break;
+      case 'melt':
+        this.visualObject = this.makeMeltShader();
         break;
     }
 
@@ -355,6 +367,45 @@ export class BloomScene {
     
     (group as any).isFractals = true;
     return group;
+  }
+
+  private makeWaterShader() {
+    // Use spherical geometry for atmospheric volumetric effect
+    const geometry = new THREE.SphereGeometry(2.5, 64, 64);
+    const material = createShaderMaterial(waterShader, this.uniforms);
+    material.side = THREE.BackSide; // Render from inside the sphere
+    material.transparent = true;
+    material.depthWrite = false;
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(0, 0, 0);
+    (mesh as any).isShader = true;
+    return mesh;
+  }
+
+  private makeTextureShader() {
+    // Use spherical geometry for atmospheric volumetric effect
+    const geometry = new THREE.SphereGeometry(2.5, 64, 64);
+    const material = createShaderMaterial(textureShader, this.uniforms);
+    material.side = THREE.BackSide; // Render from inside the sphere
+    material.transparent = true;
+    material.depthWrite = false;
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(0, 0, 0);
+    (mesh as any).isShader = true;
+    return mesh;
+  }
+
+  private makeMeltShader() {
+    // Use spherical geometry for atmospheric volumetric effect
+    const geometry = new THREE.SphereGeometry(2.5, 64, 64);
+    const material = createShaderMaterial(meltShader, this.uniforms);
+    material.side = THREE.BackSide; // Render from inside the sphere
+    material.transparent = true;
+    material.depthWrite = false;
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(0, 0, 0);
+    (mesh as any).isShader = true;
+    return mesh;
   }
 
   update(level: number, frequencyData?: Uint8Array<ArrayBuffer>) {

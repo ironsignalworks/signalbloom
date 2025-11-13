@@ -153,10 +153,12 @@ Alternatively, see `public/IMAGE-GENERATION-GUIDE.md` for other methods.
 ```
 signal-bloom/
 ├── public/
-│   ├── favicon.svg           # ISW logo favicon (included)
-│   ├── card.png              # Social media card (generate using tool)
-│   ├── icon.svg              # ISW logo for footer (included)
-│   └── generate-images.html  # Tool to generate card.png
+│   ├── favicon.svg           # SVG favicon (works everywhere)
+│   ├── favicon-32x32.png     # PNG favicon (32x32)
+│   ├── favicon-16x16.png     # PNG favicon (16x16)
+│   ├── card.png              # Social media card (1200x630)
+│   ├── icon.svg              # Small icon for footer
+│   └── generate-images.html  # Tool to generate PNG images
 ├── src/
 │   ├── main.ts               # Entry point & UI logic
 │   ├── scene.ts              # Three.js scene & 9 visualizations
