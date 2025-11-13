@@ -1,4 +1,4 @@
-import { MicAnalyser } from './audio';
+﻿import { MicAnalyser } from './audio';
 import { BloomScene } from './scene';
 import type { VisMode } from './scene';
 
@@ -269,7 +269,7 @@ startBtn.addEventListener('click', async () => {
 });
 
 // File button - ensure it's never permanently disabled
-fileBtn.addEventListener('click', () => {
+fileBtn.addEventListener('click', (e) => {
   // Don't trigger if actually disabled by mic being active
   if (isMicActive) {
     console.log('File button disabled - mic is active');

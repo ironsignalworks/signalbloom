@@ -1,4 +1,4 @@
-import { MicAnalyser } from './audio';
+﻿import { MicAnalyser } from './audio';
 import { BloomScene } from './scene';
 import type { VisMode } from './scene';
 
@@ -268,26 +268,14 @@ startBtn.addEventListener('click', async () => {
   }
 });
 
-// File button - ensure it's never permanently disabled
+// File button
 fileBtn.addEventListener('click', () => {
-  // Don't trigger if actually disabled by mic being active
-  if (isMicActive) {
-    console.log('File button disabled - mic is active');
-    return;
-  }
-  
-  console.log('File button clicked, opening file input');
   fileInput.click();
 });
 
 fileInput.addEventListener('change', async (e) => {
   const file = (e.target as HTMLInputElement).files?.[0];
-  if (!file) {
-    console.log('No file selected');
-    return;
-  }
-  
-  console.log('File selected:', file.name);
+  if (!file) return;
   
   try {
     // Stop any existing audio (mic or previous file)
@@ -311,15 +299,9 @@ fileInput.addEventListener('change', async (e) => {
     audio.setVolume(parseFloat(volumeEl.value));
     
     updateUIState();
-    
-    console.log('File loaded successfully');
   } catch (e) {
     console.error('File load error:', e);
     alert('Failed to load audio file. Please try a different file.');
-    
-    // Reset state on error
-    isFileActive = false;
-    updateUIState();
   }
 });
 
