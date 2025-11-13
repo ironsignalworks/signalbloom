@@ -1,0 +1,5 @@
+[33mcd4d2cf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Add .gitignore and cleanup VS files
+[33me544235[m Merge branch 'main' of https://github.com/ironsignalworks/signalbloom
+[33m8c6b9b6[m dist
+[33mcdb281d[m Update index.html
+[33m10101e2[m Delete node_modules/esbuild directory
