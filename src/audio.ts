@@ -10,11 +10,20 @@ export class MicAnalyser {
   startTime = 0;
   audioBuffer?: AudioBuffer;
   gainNode?: GainNode;
-  mediaStream?: MediaStream; // Exposed for proper cleanup on reset
+  mediaStream?: MediaStream; // Exposed for proper cleanup
 
   async init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    // Create new context if needed
+    if (!this.ctx || this.ctx.state === 'closed') {
+      this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    
+    // Resume context if suspended
+    if (this.ctx.state === 'suspended') {
+      await this.ctx.resume();
+    }
+    
+    // Request microphone access
     const stream = await navigator.mediaDevices.getUserMedia({ 
       audio: { 
         echoCancellation: false,
@@ -23,25 +32,40 @@ export class MicAnalyser {
       }, 
       video: false 
     });
-    this.mediaStream = stream; // Store media stream for cleanup
+    
+    this.mediaStream = stream; // Store for cleanup
     this.source = this.ctx.createMediaStreamSource(stream);
     this.setupAnalyser();
+    
     // Note: Microphone input is not connected to speakers to avoid feedback
   }
 
   async initFromFile(file: File) {
-    if (!this.ctx) {
+    // Create new context if needed
+    if (!this.ctx || this.ctx.state === 'closed') {
       this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
     
-    // Stop existing source if any
+    // Resume context if suspended
+    if (this.ctx.state === 'suspended') {
+      await this.ctx.resume();
+    }
+    
+    // Stop existing buffer source if any
     if (this.bufferSource) {
-      this.bufferSource.stop();
-      this.bufferSource.disconnect();
+      try {
+        this.bufferSource.stop();
+        this.bufferSource.disconnect();
+      } catch (e) {
+        // Already stopped
+      }
     }
 
     const arrayBuffer = await file.arrayBuffer();
     this.audioBuffer = await this.ctx.decodeAudioData(arrayBuffer);
+    
+    // Reset pause time when loading new file
+    this.pauseTime = 0;
     
     this.playBuffer();
   }
@@ -97,35 +121,40 @@ export class MicAnalyser {
   private setupAnalyser() {
     if (!this.ctx || !this.source) return;
     
+    // If analyser already exists, disconnect it first
     if (this.analyser) {
-      this.source.connect(this.analyser);
-      
-      // For file playback, also connect to destination (speakers)
-      if (this.source instanceof AudioBufferSourceNode) {
-        if (!this.gainNode) {
-          this.gainNode = this.ctx.createGain();
-          this.gainNode.gain.value = 1.0;
-          this.analyser.connect(this.gainNode);
-        }
-        this.source.connect(this.analyser);
+      try {
+        this.analyser.disconnect();
+      } catch (e) {
+        // Already disconnected
       }
-      return;
     }
     
+    // If gain node exists, disconnect it first
+    if (this.gainNode) {
+      try {
+        this.gainNode.disconnect();
+      } catch (e) {
+        // Already disconnected
+      }
+    }
+    
+    // Create new analyser
     this.analyser = this.ctx.createAnalyser();
     this.analyser.fftSize = 2048;
     this.analyser.smoothingTimeConstant = 0.75;
     this.analyser.minDecibels = -90;
     this.analyser.maxDecibels = -10;
     
+    // Connect source to analyser
     this.source.connect(this.analyser);
     
-    // Create gain node for volume control and speaker output
+    // Create gain node for volume control
     this.gainNode = this.ctx.createGain();
     this.gainNode.gain.value = 1.0;
     this.analyser.connect(this.gainNode);
     
-    // Connect to speakers only for file playback, not microphone (to avoid feedback)
+    // Connect to speakers only for file playback (not microphone to avoid feedback)
     if (this.source instanceof AudioBufferSourceNode) {
       this.gainNode.connect(this.ctx.destination);
     }

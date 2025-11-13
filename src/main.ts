@@ -50,7 +50,7 @@ function setPlayPauseIcon(isPlaying: boolean) {
   }
 }
 
-// Stop all audio sources
+// Stop all audio sources properly
 function stopAllAudio() {
   // Stop buffer source
   if (audio.bufferSource) {
@@ -63,15 +63,25 @@ function stopAllAudio() {
     audio.bufferSource = undefined;
   }
   
-  // Stop microphone
-  if (audio.source && audio.source instanceof MediaStreamAudioSourceNode) {
+  // Stop microphone and clean up media stream
+  if (audio.mediaStream) {
     try {
-      const tracks = (audio.source.mediaStream as MediaStream).getTracks();
+      const tracks = audio.mediaStream.getTracks();
       tracks.forEach(track => track.stop());
-      audio.source.disconnect();
+      audio.mediaStream = undefined;
     } catch (e) {
       // Already stopped
     }
+  }
+  
+  // Disconnect source
+  if (audio.source) {
+    try {
+      audio.source.disconnect();
+    } catch (e) {
+      // Already disconnected
+    }
+    audio.source = undefined;
   }
   
   // Disconnect analyser
@@ -92,9 +102,13 @@ function stopAllAudio() {
     }
   }
   
+  // Reset audio state
+  audio.isPaused = false;
+  audio.pauseTime = 0;
+  audio.startTime = 0;
+  audio.audioBuffer = undefined;
+  
   running = false;
-  isMicActive = false;
-  isFileActive = false;
 }
 
 // Update UI state
@@ -107,7 +121,7 @@ function updateUIState() {
   } else {
     startBtn.classList.remove('active');
     startBtn.textContent = 'Mic';
-    startBtn.disabled = false;
+    fileBtn.disabled = false;
   }
   
   // Update file button
@@ -116,7 +130,8 @@ function updateUIState() {
     startBtn.disabled = true;
   } else {
     fileBtn.classList.remove('active');
-    startBtn.disabled = false;
+    fileBtn.disabled = false;
+    fileBtn.textContent = 'File';
   }
   
   // Show/hide play button
@@ -147,17 +162,9 @@ function resetToInitialState() {
   // Stop all audio
   stopAllAudio();
   
-  // Reset audio state
-  audio.ctx = undefined;
-  audio.analyser = undefined;
-  audio.data = undefined;
-  audio.source = undefined;
-  audio.bufferSource = undefined;
-  audio.isPaused = false;
-  audio.pauseTime = 0;
-  audio.startTime = 0;
-  audio.audioBuffer = undefined;
-  audio.gainNode = undefined;
+  // Reset flags
+  isMicActive = false;
+  isFileActive = false;
   
   // Reset scene
   app.reset();
@@ -175,7 +182,6 @@ function resetToInitialState() {
   
   // Reset file input
   fileInput.value = '';
-  fileBtn.textContent = 'File';
   
   // Reset mode display
   modeValue.textContent = 'SPHERE';
@@ -216,6 +222,9 @@ document.addEventListener('keydown', (e) => {
     if (!modal.classList.contains('show')) {
       toggleFullscreen();
     }
+  } else if (e.key === ' ' && isFileActive) {
+    e.preventDefault();
+    playBtn.click();
   }
 });
 
@@ -226,17 +235,35 @@ startBtn.addEventListener('click', async () => {
   if (isMicActive) {
     // Stop microphone
     stopAllAudio();
+    isMicActive = false;
     updateUIState();
   } else {
     // Start microphone
     try {
+      // Stop any file playback first
+      if (isFileActive) {
+        stopAllAudio();
+        isFileActive = false;
+      }
+      
       await audio.init();
       running = true;
       isMicActive = true;
       updateUIState();
     } catch (e) {
       console.error('Microphone error:', e);
-      alert('Mic access denied. Upload audio file instead.');
+      
+      // More detailed error message
+      const errorMsg = e instanceof Error ? e.message : 'Unknown error';
+      if (errorMsg.includes('NotAllowedError') || errorMsg.includes('Permission')) {
+        alert('Microphone access denied. Please grant microphone permissions in your browser settings and try again.\n\nNote: Microphone requires HTTPS in production.');
+      } else if (errorMsg.includes('NotFoundError')) {
+        alert('No microphone found. Please connect a microphone and try again.');
+      } else if (errorMsg.includes('NotSupportedError')) {
+        alert('Microphone not supported. Please use HTTPS or try uploading an audio file instead.');
+      } else {
+        alert(`Microphone error: ${errorMsg}\n\nPlease try uploading an audio file instead.`);
+      }
     }
   }
 });
@@ -251,8 +278,12 @@ fileInput.addEventListener('change', async (e) => {
   if (!file) return;
   
   try {
-    // Stop any existing audio
-    stopAllAudio();
+    // Stop any existing audio (mic or previous file)
+    if (isMicActive || isFileActive) {
+      stopAllAudio();
+      isMicActive = false;
+      isFileActive = false;
+    }
     
     // Load new file
     await audio.initFromFile(file);
@@ -270,7 +301,7 @@ fileInput.addEventListener('change', async (e) => {
     updateUIState();
   } catch (e) {
     console.error('File load error:', e);
-    alert('Failed to load audio file.');
+    alert('Failed to load audio file. Please try a different file.');
   }
 });
 

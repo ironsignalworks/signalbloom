@@ -207,3 +207,46 @@ Built by [Iron Signal Works](https://ironsignalworks.com)
 ## License
 
 MIT
+
+## Deployment
+
+### GitHub Pages (Recommended)
+
+Signal Bloom is configured for GitHub Pages deployment with HTTPS enabled (required for microphone access).
+
+```bash
+# Deploy to GitHub Pages
+npm run deploy
+```
+
+This will:
+1. Build the production bundle
+2. Deploy to `gh-pages` branch
+3. Serve at `https://<username>.github.io/signalbloom/`
+
+**Important**: Microphone access requires HTTPS. GitHub Pages provides HTTPS automatically.
+
+### Custom Domain
+
+If deploying to a custom domain:
+1. Ensure SSL/TLS certificate is installed (HTTPS required)
+2. Update `base` in `vite.config.ts` to your domain path
+3. Configure your server to serve the `/dist` folder
+
+### Local Testing with HTTPS
+
+To test microphone locally with HTTPS:
+
+```bash
+# Install mkcert (one-time setup)
+npm install -g mkcert
+
+# Create local SSL certificate
+mkcert -install
+mkcert localhost
+
+# Update vite.config.ts to use HTTPS
+# Or just use localhost (microphone works on localhost without HTTPS)
+```
+
+**Note**: Microphone works on `localhost` without HTTPS, but requires HTTPS on deployed sites.
