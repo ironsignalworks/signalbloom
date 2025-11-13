@@ -1,4 +1,4 @@
-﻿# 🎵 Signal Bloom
+﻿# Signal Bloom
 
 An audio-reactive 3D visualizer built with Three.js and Web Audio API.
 
