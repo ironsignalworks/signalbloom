@@ -1,8 +1,6 @@
-﻿# Signal Bloom
+﻿# ![Signal Bloom](public/icon.svg)Signal Bloom
 
 An audio-reactive 3D visualizer built with Three.js and Web Audio API.
-
-![Signal Bloom](public/icon.svg)
 
 ## Features
 
