@@ -1,4 +1,8 @@
 import { defineConfig } from 'vite';
+
 export default defineConfig({
-  server: { open: true }
+  base: '/signalbloom/',   
+  server: {
+    open: true,
+  },
 });
